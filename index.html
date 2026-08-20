@@ -370,19 +370,22 @@ function daysUntil(iso){
   return Math.round((d - today) / 86400000);
 }
 
+const STORAGE_KEY = 'case_docket_entries_v1';
+
 async function loadCases(){
   try{
-    const result = await window.storage.get('cases', false);
-    cases = result ? JSON.parse(result.value) : [];
+    const raw = localStorage.getItem(STORAGE_KEY);
+    cases = raw ? JSON.parse(raw) : [];
   }catch(e){
     cases = [];
+    setStatus('formStatus', 'Could not load saved data on this browser.', true);
   }
   render();
 }
 
 async function saveCases(){
   try{
-    await window.storage.set('cases', JSON.stringify(cases), false);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
   }catch(e){
     setStatus('formStatus', 'Could not save — try again.', true);
   }
